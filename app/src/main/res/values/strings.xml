@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Chatme</string>
+
+    <string-array name="stacks">
+        <item>Frontend</item>
+        <item>Backend</item>
+        <item>Mobile</item>
+        <item>Data Science</item>
+        <item>Machine Learning</item>
+        <item>Dev-Ops</item>
+        <item>Networking</item>
+    </string-array>
 </resources>
