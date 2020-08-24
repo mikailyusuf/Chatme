@@ -1,5 +1,6 @@
 package com.mikail.chatme
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -77,5 +78,9 @@ class UsersFragment : Fragment(),OnUserClick {
 
     override fun onUserClick(datamodel: UserModel, position: Int) {
         Toast.makeText(activity,datamodel.username, Toast.LENGTH_LONG).show()
+        var intent = Intent(activity,MessageActivity::class.java)
+        intent.putExtra("userId",datamodel.userId)
+        startActivity(intent)
+
     }
 }

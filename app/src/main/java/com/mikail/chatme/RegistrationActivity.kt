@@ -89,26 +89,20 @@ class RegistrationActivity : AppCompatActivity() {
 
     }
 
-    private fun register(email: String, password: String, username: String, stack: String) {
-        val user = UserModel(username, email, stack, userImage = "default")
-//        val myRef = database?.getReference("Users")
-        Log.d("mytest", user.toString())
+    private fun register( email: String, password: String, username: String, stack: String) {
+
         mAuth?.createUserWithEmailAndPassword(email, password)?.addOnCompleteListener(this) {
 
             if (it.isSuccessful) {
                 val userId = mAuth?.currentUser?.uid
+                val user = userId?.let { it1 -> UserModel(it1,username, email, stack, userImage = "default") }
                 if (userId != null) {
                     myRef.child(userId).setValue(user)
                 }
                 val intent = Intent(this, ChatsActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
-
-
             } else {
-               Log.d("mytest", it.exception.toString())
-
-//                Snackbar.make(this,"SORRY",Snackbar.LENGTH_LONG).show()
                 Toast.makeText(
                     this,
                     "Cant register User Please Check your email or Password.",

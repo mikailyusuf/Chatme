@@ -24,6 +24,7 @@ class ChatsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chats)
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         fUser = FirebaseAuth.getInstance().currentUser!!
         database = FirebaseDatabase.getInstance().getReference("Users").child(fUser.uid)
