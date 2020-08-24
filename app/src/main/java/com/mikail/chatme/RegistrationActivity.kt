@@ -30,9 +30,10 @@ class RegistrationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_registration)
         FirebaseApp.initializeApp(this)
         mAuth = FirebaseAuth.getInstance()
+
+
         val stack = resources.getStringArray(R.array.stacks)
         if (spinner != null) {
-
             val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, stack)
             adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
             spinner.adapter = adapter

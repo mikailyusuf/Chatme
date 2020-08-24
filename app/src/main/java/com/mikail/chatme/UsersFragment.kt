@@ -1,32 +1,25 @@
 package com.mikail.chatme
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [UsersFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class UsersFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class UsersFragment : Fragment(),OnUserClick {
+    private lateinit var recyclerView: RecyclerView
+    private  lateinit var usersList: MutableList<UserModel>
+    private lateinit var usersDatabase: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
     }
 
     override fun onCreateView(
@@ -36,24 +29,53 @@ class UsersFragment : Fragment() {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_users, container, false)
     }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment UsersFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            UsersFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+
+        recyclerView = view.findViewById(R.id.recyclerview)
+
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
+
+        }
+
+        recyclerView.setHasFixedSize(true)
+        usersDatabase = FirebaseDatabase.getInstance().getReference("Users")
+        usersList = mutableListOf()
+
+        usersDatabase.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(databaseError: DatabaseError) {
+                Toast.makeText(activity, "Error Encounter Due to " + databaseError.message, Toast.LENGTH_LONG).show()/**/
+
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    //before fetch we have clear the list not to show duplicate value
+                    usersList.clear()
+                    // fetch data & add to list
+                    for (data in dataSnapshot.children) {
+                        val std = data.getValue(UserModel::class.java)
+                        Log.d("devmk",std.toString())
+                        usersList.add(std!!)
+                    }
+
+                    // bind data to adapter
+                    val adapter = UsersAdapter(usersList, this@UsersFragment)
+                    recyclerView.adapter = adapter
+                    // progressBar.visibility = View.GONE
+                    adapter.notifyDataSetChanged()
+
+                } else {
+
                 }
             }
+        })
+    }
+
+
+    override fun onUserClick(datamodel: UserModel, position: Int) {
+        Toast.makeText(activity,datamodel.username, Toast.LENGTH_LONG).show()
     }
 }
