@@ -1,25 +1,30 @@
-package com.mikail.chatme
+package com.mikail.chatme.authUi
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.mikail.chatme.ui.ChatsActivity
+import com.mikail.chatme.R
+
+import com.mikail.chatme.models.User
 import kotlinx.android.synthetic.main.activity_registration.*
-import java.util.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
-class RegistrationActivity : AppCompatActivity() {
-
-    //    private var init = FirebaseApp.initializeApp(this)
-//    FirebaseApp.initializeApp(this)
+class SignUpActivity : AppCompatActivity() {
+    private var userRef = Firebase.firestore.collection("Users")
     private var mAuth: FirebaseAuth? = null
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val myRef = database.getReference("Users")
@@ -46,6 +51,11 @@ class RegistrationActivity : AppCompatActivity() {
                     id: Long
                 ) {
                     mStack = parent.getItemAtPosition(position).toString()
+                    if (mStack == "none")
+                    {
+                        noStack.visibility = View.VISIBLE
+                        mStack = noStack.text.toString()
+                    }
 
                 }
 
@@ -89,19 +99,41 @@ class RegistrationActivity : AppCompatActivity() {
 
     }
 
+
+    private  fun registerUserToDb(user: User) = CoroutineScope(Dispatchers.IO).launch {
+
+        try {
+            userRef.add(user).await()
+
+        }
+
+        catch (e:Exception){
+
+        }
+    }
+
     private fun register( email: String, password: String, username: String, stack: String) {
 
         mAuth?.createUserWithEmailAndPassword(email, password)?.addOnCompleteListener(this) {
 
             if (it.isSuccessful) {
                 val userId = mAuth?.currentUser?.uid
-                val user = userId?.let { it1 -> UserModel(it1,username, email, stack, userImage = "default") }
-                if (userId != null) {
-                    myRef.child(userId).setValue(user)
+                val user = userId?.let { it1 ->
+                    User(
+                        it1,
+                        username,
+                        email,
+                        stack,
+                        userImage = "default"
+                    )
                 }
-                val intent = Intent(this, ChatsActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                startActivity(intent)
+                if (userId != null) {
+                    if (user != null) {
+                        registerUserToDb(user)
+                    }
+
+                }
+
             } else {
                 Toast.makeText(
                     this,

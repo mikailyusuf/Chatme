@@ -1,4 +1,4 @@
-package com.mikail.chatme
+package com.mikail.chatme.models
 
 import android.content.BroadcastReceiver
 

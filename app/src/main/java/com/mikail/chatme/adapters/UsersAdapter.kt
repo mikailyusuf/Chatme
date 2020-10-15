@@ -1,4 +1,4 @@
-package com.mikail.chatme
+package com.mikail.chatme.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,15 +6,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.mikail.chatme.R
+import com.mikail.chatme.models.User
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_chats.*
-import kotlinx.android.synthetic.main.activity_chats.view.*
 import kotlinx.android.synthetic.main.activity_chats.view.userImage
 import kotlinx.android.synthetic.main.users.view.*
 import kotlinx.android.synthetic.main.users.view.username
 
-class UsersAdapter(private val ItemsList: List<UserModel>, val listener: OnUserClick) :
+class UsersAdapter(private val ItemsList: List<User>, val listener: OnUserClick) :
     RecyclerView.Adapter<UsersAdapter.RecyclerViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder {
 
@@ -36,15 +35,16 @@ class UsersAdapter(private val ItemsList: List<UserModel>, val listener: OnUserC
 
         val currentItem = ItemsList[position]
         holder.initialise(ItemsList.get(position), listener)
+
     }
 
     class RecyclerViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
         private val username: TextView = itemview.username
         private val image: ImageView = itemview.userImage
         private val stack: TextView = itemview.stack
-        fun initialise(datamodel: UserModel, listener: OnUserClick) {
+        fun initialise(datamodel: User, listener: OnUserClick) {
             username.text = datamodel.username
-            val mstack = datamodel.stack + "Developer"
+            val mstack = datamodel.stack + "  Developer"
             stack.text = mstack
 
             if (datamodel.userImage == "default") {
@@ -55,14 +55,14 @@ class UsersAdapter(private val ItemsList: List<UserModel>, val listener: OnUserC
             itemView.setOnClickListener {
                 listener.onUserClick(datamodel, adapterPosition)
             }
-            itemView.setOnClickListener {
-                listener.onUserClick(datamodel, adapterPosition)
-            }
+//            itemView.setOnClickListener {
+//                listener.onUserClick(datamodel, adapterPosition)
+//            }
 
         }
     }
 }
 
 interface OnUserClick {
-    fun onUserClick(datamodel: UserModel, position: Int)
+    fun onUserClick(datamodel: User, position: Int)
 }

@@ -1,4 +1,4 @@
-package com.mikail.chatme
+package com.mikail.chatme.ui
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,12 +7,15 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.viewpager2.widget.ViewPager2
-import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.mikail.chatme.R
+import com.mikail.chatme.adapters.ViewpagerAdapter
+import com.mikail.chatme.authUi.LoginActivity
+import com.mikail.chatme.models.User
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_chats.*
 
@@ -24,15 +27,18 @@ class ChatsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chats)
+
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
         fUser = FirebaseAuth.getInstance().currentUser!!
         database = FirebaseDatabase.getInstance().getReference("Users").child(fUser.uid)
         database.addValueEventListener(object : ValueEventListener {
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    val data = snapshot.getValue(UserModel::class.java)
+                    val data = snapshot.getValue(User::class.java)
                     username.text = data?.username
                     if (data?.userImage == "default") {
                         userImage.setImageResource(R.drawable.person)
@@ -53,7 +59,10 @@ class ChatsActivity : AppCompatActivity() {
 
         tabLayout = findViewById(R.id.tabLayout)
         viewPager = findViewById(R.id.viewpager)
-        viewPager!!.adapter = ViewpagerAdapter(supportFragmentManager, lifecycle)
+        viewPager!!.adapter = ViewpagerAdapter(
+            supportFragmentManager,
+            lifecycle
+        )
 
         TabLayoutMediator(
             tabLayout!!,
@@ -77,13 +86,10 @@ class ChatsActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.logout -> {
-                Toast.makeText(this@ChatsActivity, "LOG OUT", Toast.LENGTH_SHORT)
-                    .show()
                 FirebaseAuth.getInstance().signOut()
                 val it = Intent(this, LoginActivity::class.java)
                 startActivity(it)
                 finish()
-                Toast.makeText(applicationContext, "Log out ", Toast.LENGTH_LONG).show()
                 return true
             }
             else -> super.onOptionsItemSelected(item)
