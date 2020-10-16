@@ -17,8 +17,8 @@ import com.mikail.chatme.adapters.MessageAdapter
 import com.mikail.chatme.models.MessageModel
 import com.mikail.chatme.models.User
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_chats.userImage
-import kotlinx.android.synthetic.main.activity_chats.username
+//import kotlinx.android.synthetic.main.activity_chats.userImage
+//import kotlinx.android.synthetic.main.activity_chats.username
 import kotlinx.android.synthetic.main.activity_message.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -150,25 +150,25 @@ class MessageActivity : AppCompatActivity() {
     {
         chatMessage = mutableListOf(MessageModel())
 
-        dbRef.whereEqualTo("sender",senderId)
-            .whereEqualTo("receiver",receiverId)
-            .whereEqualTo("sender",receiverId)
-            .whereEqualTo("receiver",senderId)
-            .addSnapshotListener { value, error ->
+        dbRef.addSnapshotListener { value, error ->
 
                 error.let {
-                    Log.d("error",it.toString())
                 }
 
                 value?.let {
+                    chatMessage.clear()
                     for (documents in value.documents)
                     {
                         val messages = documents.toObject<MessageModel>()
                         if (messages!=null)
                         {
-                            chatMessage.add(messages)
-                            adapter = MessageAdapter(chatMessage)
-                            recyclerView.adapter = adapter
+                            if (messages.sender == senderId && messages.receiver == receiverId  || messages.receiver == senderId && messages.sender == receiverId  )
+                            {
+                                chatMessage.add(messages)
+                                adapter = MessageAdapter(chatMessage)
+                                recyclerView.adapter = adapter
+                            }
+
                         }
                     }
                 }

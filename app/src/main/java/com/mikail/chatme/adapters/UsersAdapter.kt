@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mikail.chatme.R
 import com.mikail.chatme.models.User
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_chats.view.userImage
+//import kotlinx.android.synthetic.main.activity_chats.view.userImage
 import kotlinx.android.synthetic.main.users.view.*
 import kotlinx.android.synthetic.main.users.view.username
 
