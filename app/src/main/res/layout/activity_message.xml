@@ -34,34 +34,20 @@
             android:textColor="@color/white"/>
     </com.google.android.material.appbar.MaterialToolbar>
 
-    <!--    <com.google.android.material.textfield.TextInputLayout-->
-<!--        android:id="@+id/textInputLayout7"-->
-<!--        android:layout_width="275dp"-->
-<!--        android:layout_height="95dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.0"-->
-<!--        app:layout_constraintStart_toStartOf="parent">-->
-
-<!--        <com.google.android.material.textfield.TextInputEditText-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content" />-->
-
-<!--    </com.google.android.material.textfield.TextInputLayout>-->
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
+        android:layout_margin="10dp"
         app:layout_constraintStart_toStartOf="parent">
 
         <EditText
             android:id="@+id/emesssage"
             android:layout_width="0dp"
+            android:padding="5dp"
             android:layout_height="0dp"
             android:hint="Enter Your Message ... "
             android:background="@android:color/transparent"
@@ -72,8 +58,8 @@
 
         <ImageButton
             android:id="@+id/send"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="25dp"
+            android:layout_height="30dp"
            android:background="@drawable/send"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

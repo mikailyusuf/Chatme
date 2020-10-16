@@ -57,10 +57,6 @@ class ChatFragment : Fragment(), OnUserClick {
 
          currentUser = FirebaseAuth.getInstance().currentUser!!.uid
 
-//        usersDatabase = FirebaseDatabase.getInstance().getReference("Chats")
-//        chatList = mutableListOf()
-
-
         dbRef.whereEqualTo("sender",currentUser)
             .whereEqualTo("receiver",currentUser)
             .addSnapshotListener { value, error ->
@@ -75,76 +71,14 @@ class ChatFragment : Fragment(), OnUserClick {
                         val message = documents.toObject<MessageModel>()
                         if (message!=null)
                         {
-                            userRef.whereEqualTo("userId",message.receiver)
-                                .whereEqualTo("userId",message.sender)
-                                .addSnapshotListener { value, error ->
 
-                                    error?.let {
-                                        Toast.makeText(activity,"Sorry cant get Users at this time",Toast.LENGTH_SHORT).show()
-                                        return@addSnapshotListener
-                                    }
-
-                                    value?.let {
-                                        for(userl in value.documents)
-                                        {
-                                            val users = userl.toObject<User>()
-                                            if (users != null) {
-                                                if (!users.userId.equals( FirebaseAuth.getInstance().currentUser!!)) {
-                                                    usersList.add(users)
-                                                }
-                                            }
-
-                                            val adapter = UsersAdapter(
-                                                usersList,this)
-                                            recyclerView.adapter = adapter
-                                            // progressBar.visibility = View.GONE
-                                            adapter.notifyDataSetChanged()
-
-                                        }
-
-                                    }
-                                }
 
                         }
                     }
                 }
             }
 
-//        usersDatabase.addValueEventListener(object : ValueEventListener {
-//            override fun onCancelled(databaseError: DatabaseError) {
-//                Toast.makeText(
-//                    activity,
-//                    "Error Encounter Due to " + databaseError.message,
-//                    Toast.LENGTH_LONG
-//                ).show()/**/
-//
-//            }
-//
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                if (dataSnapshot.exists()) {
-//                    //before fetch we have clear the list not to show duplicate value
-//                    (chatList as MutableList<String>).clear()
-//                    // fetch data & add to list
-//                    for (data in dataSnapshot.children) {
-//                        val std = data.getValue(MessageModel::class.java)
-//                        if (std?.sender?.equals(currentUser)!!)
-//                        {
-//                            (chatList as MutableList<String>).add(std.sender)
-//                        }
-//                        if (std.receiver.equals(currentUser))
-//                        {
-//                            (chatList as MutableList<String>).add(std.receiver)
-//                        }
-//
-//                    }
-//
-//                    readChats()
-//
-//                } else {
-//
-//                }
-//            }
-//        })
+
     }
 
 
@@ -155,46 +89,37 @@ class ChatFragment : Fragment(), OnUserClick {
     }
 
 
-//    fun readChats() {
-//        usersDatabase = FirebaseDatabase.getInstance().getReference("Users")
-//        usersDatabase.addValueEventListener(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                usersList.clear()
-//                for (data in snapshot.children) {
-//                    var users = data.getValue(User::class.java)
-//                    for (id in chatList) {
-//                        if (users?.userId.equals(id)) {
-//                            if (usersList.size != 0) {
-//                                for (user1 in usersList) {
-//                                    if (users?.userId.equals(user1.userId)) {
-//                                        if (users != null) {
-//                                            usersList.add(users)
-//                                            Log.d("devmk", usersList.toString())
+//    fun test()
+//    {
+//        userRef.whereEqualTo("userId",message.receiver)
+//            .whereEqualTo("userId",message.sender)
+//            .addSnapshotListener { value, error ->
 //
-//                                        }
-//                                    }
-//                                }
+//                error?.let {
+//                    Toast.makeText(activity,"Sorry cant get Users at this time",Toast.LENGTH_SHORT).show()
+//                    return@addSnapshotListener
+//                }
 //
-//                            } else {
-//                                if (users != null) {
-//                                    usersList.add(users)
-//                                }
+//                value?.let {
+//                    for(userl in value.documents)
+//                    {
+//                        val users = userl.toObject<User>()
+//                        if (users != null) {
+//                            if (!users.userId.equals( FirebaseAuth.getInstance().currentUser!!)) {
+//                                usersList.add(users)
 //                            }
 //                        }
+//
+//                        val adapter = UsersAdapter(
+//                            usersList,this)
+//                        recyclerView.adapter = adapter
+//                        // progressBar.visibility = View.GONE
+//                        adapter.notifyDataSetChanged()
+//
 //                    }
+//
 //                }
-//                val adapter = UsersAdapter(usersList, this@ChatFragment)
-//                recyclerView.adapter = adapter
-//                // progressBar.visibility = View.GONE
-//                adapter.notifyDataSetChanged()
 //            }
-//
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                TODO("Not yet implemented")
-//            }
-//        })
-//
 //    }
 
 

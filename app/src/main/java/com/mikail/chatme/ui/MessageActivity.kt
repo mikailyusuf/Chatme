@@ -65,7 +65,7 @@ class MessageActivity : AppCompatActivity() {
             .addSnapshotListener { value, error ->
 
                 error.let {
-                    Log.d("error",it.toString())
+
                 }
 
                 value?.let {
@@ -90,28 +90,7 @@ class MessageActivity : AppCompatActivity() {
                     }
                 }
             }
-//        database = FirebaseDatabase.getInstance().getReference("Users").child(receiverId!!)
-//        database.addValueEventListener(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                val data = snapshot.getValue(User::class.java)
-//                if (snapshot.exists()) {
-//                    username.text = data?.username
-//                    if (data?.userImage == "default") {
-//                        userImage.setImageResource(R.drawable.person)
-//                    }
-//                    else {
-//                        Picasso.get().load(data?.userImage).into(userImage)
-//                    }
-//                }
-//
-//                data?.userImage?.let { readMessages(fUser.uid,receiverId, it) }
-//
-//            }
-//            override fun onCancelled(error: DatabaseError) {
-//                Toast.makeText(this@MessageActivity, "Sorry An error occured", Toast.LENGTH_SHORT)
-//                    .show()
-//            }
-//        })
+
         send.setOnClickListener {
 
             val message = emesssage.text.toString()
