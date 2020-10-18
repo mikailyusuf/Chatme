@@ -77,7 +77,7 @@ class MessageActivity : AppCompatActivity() {
                             username.text = user.username
                             if (user.userImage == "default")
                             {
-                                userImage.setImageResource(R.drawable.person)
+                                userImage.setImageResource(R.drawable.defaultimage)
                             }
                             else{
                                 Picasso.get().load(user.userImage).into(userImage)

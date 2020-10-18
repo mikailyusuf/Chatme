@@ -145,7 +145,6 @@ class SignUpActivity : AppCompatActivity() {
             data?.data?.let {
                 imageUri = it
                 profile_image.setImageURI(it)
-                progressBar.visibility = View.VISIBLE
                 uploadImage()
                 progressBar.visibility = View.INVISIBLE
             }
@@ -156,7 +155,7 @@ class SignUpActivity : AppCompatActivity() {
         if (imageUri != null) {
             progressBar.visibility = View.VISIBLE
             signup.visibility = View.INVISIBLE
-            val ref = imageRef.child("uploads/" + UUID.randomUUID().toString())
+            val ref = imageRef.child("profileImages/" + UUID.randomUUID().toString())
             val uploadTask = ref.putFile(imageUri!!)
 
             uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->

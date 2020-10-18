@@ -58,7 +58,7 @@ class MessageAdapter(private val messageList: List<MessageModel>) :
 
     class RecyclerViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
         val showMessage: TextView = itemview.findViewById(R.id.message)
-         val image: ImageView = itemview.findViewById(R.id.profile_image)
+//         val image: ImageView = itemview.findViewById(R.id.profile_image)
 
 
     }
