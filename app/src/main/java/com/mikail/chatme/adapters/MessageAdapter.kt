@@ -15,7 +15,7 @@ import com.squareup.picasso.Picasso
 
 class MessageAdapter(private val messageList: List<MessageModel>) :
     RecyclerView.Adapter<MessageAdapter.RecyclerViewHolder>() {
-    lateinit var fUser: FirebaseUser
+    lateinit var fUser: String
     private val messageLeft = 0
     private val messageRight = 1
 
@@ -64,8 +64,8 @@ class MessageAdapter(private val messageList: List<MessageModel>) :
     }
 
     override fun getItemViewType(position: Int): Int {
-        fUser = FirebaseAuth.getInstance().currentUser!!
-        if (messageList[position].sender.equals(fUser)) {
+        fUser = FirebaseAuth.getInstance().currentUser!!.uid
+        if (messageList[position].sender == fUser) {
             return messageRight
         } else {
             return messageLeft

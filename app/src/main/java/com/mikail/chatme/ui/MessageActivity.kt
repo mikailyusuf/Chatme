@@ -92,6 +92,7 @@ class MessageActivity : AppCompatActivity() {
             }
 
         send.setOnClickListener {
+           val time =  System.currentTimeMillis()
 
             val message = emesssage.text.toString()
             if (message.isNullOrEmpty())
@@ -129,7 +130,8 @@ class MessageActivity : AppCompatActivity() {
     {
         chatMessage = mutableListOf(MessageModel())
 
-        dbRef.addSnapshotListener { value, error ->
+        dbRef
+            .addSnapshotListener { value, error ->
 
                 error.let {
                 }
@@ -153,29 +155,7 @@ class MessageActivity : AppCompatActivity() {
                 }
 
             }
-//        var reference = FirebaseDatabase.getInstance().getReference("Chats")
-//        reference.addValueEventListener(object :ValueEventListener{
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                chatMessage.clear()
-//               for (data in snapshot.children)
-//               {
-//                    val std = data.getValue(MessageModel::class.java)
-//                   if (std?.sender.equals(myId)&& std?.receiver.equals(userId) || std?.sender.equals(userId) && std?.receiver.equals(myId))
-//                   {
-//                       if (std != null) {
-//                           chatMessage.add(std)
-//                       }
-//                   }
-//               }
-//
-//                adapter = MessageAdapter(chatMessage,image)
-//                recyclerView.adapter = adapter
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                TODO("Not yet implemented")
-//            }
-//        })
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -1,19 +1,23 @@
 package com.mikail.chatme.authUi
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.snackbar.Snackbar.make
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.UploadTask
+import com.google.firebase.storage.ktx.storage
 import com.mikail.chatme.Internet
 import com.mikail.chatme.ui.ChatsActivity
 import com.mikail.chatme.R
@@ -25,6 +29,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.*
+
+private const val REQUEST_CODE_IMAGE_PICK = 100
 
 class SignUpActivity : AppCompatActivity() {
     private var userRef = Firebase.firestore.collection("Users")
@@ -32,6 +39,10 @@ class SignUpActivity : AppCompatActivity() {
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val myRef = database.getReference("Users")
     lateinit var mStack: String
+    private var profileImageUrl = ""
+    private val imageRef = Firebase.storage.reference
+    private var imageUri: Uri? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +77,17 @@ class SignUpActivity : AppCompatActivity() {
                     // Another interface callback
                 }
             }
+        }
+
+        profile_image.setOnClickListener {
+            Intent(Intent.ACTION_GET_CONTENT).also {
+                it.type = "image/*"
+                startActivityForResult(
+                    it,
+                    REQUEST_CODE_IMAGE_PICK
+                )
+            }
+
         }
 
 
@@ -103,7 +125,7 @@ class SignUpActivity : AppCompatActivity() {
                 val mEmail = email.text?.trim().toString()
                 val mPassword = password?.text?.trim().toString()
 
-                register(mEmail, mPassword, mUseranme, mStack)
+                register(mEmail, mPassword, mUseranme, mStack,profileImageUrl)
             }
             else{
                 Toast.makeText(this,"Sorry You ar not Connected to the Internet",Toast.LENGTH_SHORT).show()
@@ -117,6 +139,55 @@ class SignUpActivity : AppCompatActivity() {
 
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_IMAGE_PICK) {
+            data?.data?.let {
+                imageUri = it
+                profile_image.setImageURI(it)
+                progressBar.visibility = View.VISIBLE
+                uploadImage()
+                progressBar.visibility = View.INVISIBLE
+            }
+        }
+    }
+
+    private fun uploadImage() {
+        if (imageUri != null) {
+            progressBar.visibility = View.VISIBLE
+            signup.visibility = View.INVISIBLE
+            val ref = imageRef.child("uploads/" + UUID.randomUUID().toString())
+            val uploadTask = ref.putFile(imageUri!!)
+
+            uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                if (!task.isSuccessful) {
+                    progressBar.visibility = View.INVISIBLE
+                    signup.visibility = View.VISIBLE
+
+
+                    task.exception?.let {
+                        throw it
+                    }
+                }
+                return@Continuation ref.downloadUrl
+            }).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    progressBar.visibility = View.INVISIBLE
+                    signup.visibility = View.VISIBLE
+
+
+                    profileImageUrl = task.result.toString()
+                } else {
+                    // Handle failures
+                }
+            }.addOnFailureListener {
+                Toast.makeText(this, "Sorry an Error Occured", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(this, "Please Upload an Image", Toast.LENGTH_SHORT).show()
+
+        }
+    }
 
 
     private  fun registerUserToDb(user: User) = CoroutineScope(Dispatchers.IO).launch {
@@ -126,6 +197,7 @@ class SignUpActivity : AppCompatActivity() {
             withContext(Dispatchers.Main)
             {
                 progressBar.visibility = View.INVISIBLE
+                startActivity(Intent(this@SignUpActivity,ChatsActivity::class.java))
             }
         }
         catch (e:Exception){
@@ -136,7 +208,7 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    private fun register( email: String, password: String, username: String, stack: String) {
+    private fun register(email: String, password: String, username: String, stack: String, profileImage:String) {
 
         mAuth?.createUserWithEmailAndPassword(email, password)?.addOnCompleteListener(this) {
 
@@ -150,7 +222,7 @@ class SignUpActivity : AppCompatActivity() {
                         username,
                         email,
                         stack,
-                        userImage = "default"
+                        profileImage
                     )
                 }
                 if (userId != null) {
@@ -170,4 +242,6 @@ class SignUpActivity : AppCompatActivity() {
             }
         }
     }
+
+
 }

@@ -65,7 +65,7 @@ class UsersFragment : Fragment(), OnUserClick {
                 {
                     val users = documents.toObject<User>()
                     if (users != null) {
-                        if (!users.userId.equals( FirebaseAuth.getInstance().currentUser!!)) {
+                        if (users.userId != FirebaseAuth.getInstance().currentUser!!.uid) {
                             usersList.add(users)
                         }
                     }

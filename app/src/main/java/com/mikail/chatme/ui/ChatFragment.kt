@@ -27,6 +27,7 @@ class ChatFragment : Fragment(), OnUserClick {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var usersList: MutableList<User>
+    private  lateinit var userFromChats :MutableSet<String>
     lateinit var currentUser:String
     private var dbRef = Firebase.firestore.collection("Chats")
     private var userRef = Firebase.firestore.collection("Users")
@@ -49,6 +50,7 @@ class ChatFragment : Fragment(), OnUserClick {
 
         recyclerView = view.findViewById(R.id.recyclerview)
         usersList = mutableListOf()
+        userFromChats = mutableSetOf()
         recyclerView.apply {
             layoutManager = LinearLayoutManager(activity)
             setHasFixedSize(true)
@@ -58,7 +60,6 @@ class ChatFragment : Fragment(), OnUserClick {
          currentUser = FirebaseAuth.getInstance().currentUser!!.uid
 
         dbRef.whereEqualTo("sender",currentUser)
-            .whereEqualTo("receiver",currentUser)
             .addSnapshotListener { value, error ->
 
                 error.let {
@@ -71,16 +72,46 @@ class ChatFragment : Fragment(), OnUserClick {
                         val message = documents.toObject<MessageModel>()
                         if (message!=null)
                         {
+                            userFromChats.add(message.receiver)
 
 
                         }
                     }
+                    loadUsers(userFromChats)
                 }
+
             }
+
 
 
     }
 
+    fun loadUsers(list:MutableSet<String>)
+    {
+        for (user in list)
+        {
+            userRef.whereEqualTo("userId",user)
+                .addSnapshotListener { value, error ->
+
+                    value?.let {
+//                        usersList.clear()
+
+                        for (documemts in value.documents)
+                        {
+                            val user = documemts.toObject<User>()
+                            if (user!=null)
+                            {
+                                usersList.add(user)
+                                val adapter = UsersAdapter(usersList,this)
+                                 recyclerView.adapter = adapter
+                                adapter.notifyDataSetChanged()
+
+                            }
+                        }
+                    }
+                }
+        }
+    }
 
     override fun onUserClick(datamodel: User, position: Int) {
         var intent = Intent(activity, MessageActivity::class.java)

@@ -48,7 +48,7 @@ class UsersAdapter(private val ItemsList: List<User>, val listener: OnUserClick)
             stack.text = mstack
 
             if (datamodel.userImage == "default") {
-                image.setImageResource(R.drawable.person)
+                image.setImageResource(R.drawable.defaultimage)
             } else {
                 Picasso.get().load(datamodel.userImage).into(image)
             }
