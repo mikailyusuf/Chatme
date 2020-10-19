@@ -42,6 +42,7 @@ class UsersAdapter(private val ItemsList: List<User>, val listener: OnUserClick)
         private val username: TextView = itemview.username
         private val image: ImageView = itemview.userImage
         private val stack: TextView = itemview.stack
+        private val editStatus = itemview.status
         fun initialise(datamodel: User, listener: OnUserClick) {
             username.text = datamodel.username
             val mstack = datamodel.stack + "  Developer"
@@ -51,6 +52,15 @@ class UsersAdapter(private val ItemsList: List<User>, val listener: OnUserClick)
                 image.setImageResource(R.drawable.defaultimage)
             } else {
                 Picasso.get().load(datamodel.userImage).into(image)
+            }
+
+            if (datamodel.status)
+            {
+                editStatus.visibility = View.VISIBLE
+            }
+            else{
+                editStatus.visibility = View.INVISIBLE
+
             }
             itemView.setOnClickListener {
                 listener.onUserClick(datamodel, adapterPosition)

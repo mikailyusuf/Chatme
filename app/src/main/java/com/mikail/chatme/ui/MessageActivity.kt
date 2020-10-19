@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -24,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.lang.Exception
 
 class MessageActivity : AppCompatActivity() {
     lateinit var fUser: FirebaseUser
@@ -156,6 +158,37 @@ class MessageActivity : AppCompatActivity() {
 
             }
 
+    }
+
+    private fun status(status:Boolean) = CoroutineScope(Dispatchers.IO).launch {
+        val map = mutableMapOf<String, Boolean>()
+        map["status"] = status
+        val userQuery = userRef.whereEqualTo("userId",FirebaseAuth.getInstance().currentUser?.uid).get().await()
+        if (userQuery.documents.isNotEmpty())
+        {
+            for (document in userQuery)
+            {
+                try {
+                    userRef.document(document.id).set(status, SetOptions.merge()).await()
+
+                }
+                catch (e: Exception){
+                    Log.d("userStatus",e.toString())
+                }
+
+            }
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        status(true)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        status(false)
     }
 
     override fun onSupportNavigateUp(): Boolean {
