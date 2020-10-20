@@ -61,6 +61,7 @@ class UsersFragment : Fragment(), OnUserClick {
             }
 
             value?.let {
+                usersList.clear()
                 for(documents in value.documents)
                 {
                     val users = documents.toObject<User>()
