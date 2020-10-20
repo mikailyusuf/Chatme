@@ -1,5 +1,6 @@
 package com.mikail.chatme.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -18,8 +19,6 @@ import com.mikail.chatme.adapters.MessageAdapter
 import com.mikail.chatme.models.MessageModel
 import com.mikail.chatme.models.User
 import com.squareup.picasso.Picasso
-//import kotlinx.android.synthetic.main.activity_chats.userImage
-//import kotlinx.android.synthetic.main.activity_chats.username
 import kotlinx.android.synthetic.main.activity_message.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +28,6 @@ import java.lang.Exception
 
 class MessageActivity : AppCompatActivity() {
     lateinit var fUser: FirebaseUser
-    lateinit var database: DatabaseReference
     lateinit var adapter:MessageAdapter
     private lateinit var recyclerView: RecyclerView
     private  lateinit var chatMessage: MutableList<MessageModel>
@@ -49,6 +47,10 @@ class MessageActivity : AppCompatActivity() {
         val actionbar = supportActionBar
         actionbar?.setDisplayHomeAsUpEnabled(true)
 
+        val receiverId = intent.getStringExtra("userId")
+        fUser = FirebaseAuth.getInstance().currentUser!!
+        val id = fUser.uid
+
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         recyclerView = findViewById(R.id.recyclerview)
@@ -57,11 +59,15 @@ class MessageActivity : AppCompatActivity() {
         linearLayout.stackFromEnd = true
         recyclerView.layoutManager =linearLayout
 
+        toolbar.setOnClickListener {
+            val intent = Intent(this,UserProfile::class.java)
+            intent.putExtra("id",receiverId)
+            startActivity(intent)
+        }
 
 
-        val receiverId = intent.getStringExtra("userId")
-        fUser = FirebaseAuth.getInstance().currentUser!!
-        val id = fUser.uid
+
+
 
         userRef.whereEqualTo("userId",receiverId)
             .addSnapshotListener { value, error ->
@@ -118,14 +124,6 @@ class MessageActivity : AppCompatActivity() {
         dbRef.add(messageModel).await()
 
     }
-//    {
-
-//        var reference:DatabaseReference = FirebaseDatabase.getInstance().reference
-//        val key = reference.child("Chats").push().key
-//        if (key != null) {
-//            reference.child("Chats").child(key).setValue(messageModel)
-//        }
-//    }
 
 
     fun readMessages(senderId:String,receiverId:String,image:String)
@@ -169,7 +167,7 @@ class MessageActivity : AppCompatActivity() {
             for (document in userQuery)
             {
                 try {
-                    userRef.document(document.id).set(status, SetOptions.merge()).await()
+                    userRef.document(document.id).set(map, SetOptions.merge()).await()
 
                 }
                 catch (e: Exception){

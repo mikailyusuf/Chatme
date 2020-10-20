@@ -101,7 +101,15 @@ class ChatsActivity : AppCompatActivity() {
                 startActivity(Intent(this, LoginActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 //                finish()
                 return true
+
             }
+
+            R.id.profile->{
+
+                startActivity(Intent(this,ProfileActivity::class.java))
+                return true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
