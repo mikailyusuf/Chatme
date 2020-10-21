@@ -44,29 +44,7 @@ class ChatsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         fUser = FirebaseAuth.getInstance().currentUser!!
-//        database = FirebaseDatabase.getInstance().getReference("Users").child(fUser.uid)
-//        database.addValueEventListener(object : ValueEventListener {
-//
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                if (snapshot.exists()) {
-//                    val data = snapshot.getValue(User::class.java)
-//                    username.text = data?.username
-//                    if (data?.userImage == "default") {
-//                        userImage.setImageResource(R.drawable.person)
-//                    }
-//                    else {
-//                        Picasso.get().load(data?.userImage).into(userImage)
-//                    }
-//
-//                }
-//
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                Toast.makeText(this@ChatsActivity, "Sorry An error occured", Toast.LENGTH_SHORT)
-//                    .show()
-//            }
-//        })
+        status(true)
 
         tabLayout = findViewById(R.id.tabLayout)
         viewPager = findViewById(R.id.viewpager)
@@ -144,6 +122,7 @@ class ChatsActivity : AppCompatActivity() {
         super.onPause()
         status(false)
     }
+
 
 
 

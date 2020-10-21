@@ -60,15 +60,12 @@ class MessageActivity : AppCompatActivity() {
         recyclerView.layoutManager =linearLayout
 
         toolbar.setOnClickListener {
-            val intent = Intent(this,UserProfile::class.java)
-            intent.putExtra("id",receiverId)
-            startActivity(intent)
+           val dialog = receiverId?.let { it1 -> UserProfile.newInstance(it1) }
+            if (dialog != null) {
+                dialog.show(supportFragmentManager,"customDialog")
+            }
+
         }
-
-
-
-
-
         userRef.whereEqualTo("userId",receiverId)
             .addSnapshotListener { value, error ->
 

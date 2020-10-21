@@ -43,7 +43,7 @@ class UsersFragment : Fragment(), OnUserClick {
         recyclerView = view.findViewById(R.id.recyclerview)
 
         recyclerView.apply {
-            layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
+            layoutManager = LinearLayoutManager(activity)
             setHasFixedSize(true)
         }
 

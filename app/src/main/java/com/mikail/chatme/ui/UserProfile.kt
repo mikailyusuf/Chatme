@@ -2,6 +2,10 @@ package com.mikail.chatme.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -12,18 +16,28 @@ import kotlinx.android.synthetic.main.activity_message.*
 import kotlinx.android.synthetic.main.activity_message.userImage
 import kotlinx.android.synthetic.main.activity_message.username
 import kotlinx.android.synthetic.main.activity_user_profile.*
+import kotlinx.android.synthetic.main.activity_user_profile.view.*
+import java.lang.IllegalStateException
 
-class UserProfile : AppCompatActivity() {
+class UserProfile : DialogFragment(){
     private var userRef = Firebase.firestore.collection("Users")
+    lateinit var ud:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_user_profile)
+        ud = arguments?.getString("id")?:throw IllegalStateException("No arguenmts Provided")
 
-        val id = intent.getStringExtra("id")
+    }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
-        userRef.whereEqualTo("userId",id)
+        val rootView:View = inflater.inflate(R.layout.activity_user_profile,container,false)
+
+        userRef.whereEqualTo("userId",ud)
             .addSnapshotListener { value, error ->
 
                 error.let {
@@ -37,16 +51,16 @@ class UserProfile : AppCompatActivity() {
                         val user = document.toObject<User>()
                         if (user!=null)
                         {
-                            username.text = user.username
-                            stack.text = user.stack
+                           rootView.username.text = user.username
+                            rootView.stack.text = user.stack
                             val  userStack= " ${user.email} Developer"
-                            email.text = userStack
+                            rootView.email.text = userStack
                             if (user.userImage == "default")
                             {
-                                userImage.setImageResource(R.drawable.defaultimage)
+                                rootView.userImage.setImageResource(R.drawable.defaultimage)
                             }
                             else{
-                                Picasso.get().load(user.userImage).into(userImage)
+                                Picasso.get().load(user.userImage).into(rootView.userImage)
                             }
 
 
@@ -55,5 +69,15 @@ class UserProfile : AppCompatActivity() {
 
                 }
             }
+        return rootView
     }
+companion object{
+    private const val userId = ""
+    fun newInstance(item:String):UserProfile = UserProfile().apply {
+        arguments = Bundle().apply {
+            putString("id",userId)
+        }
+    }
+}
+
 }
