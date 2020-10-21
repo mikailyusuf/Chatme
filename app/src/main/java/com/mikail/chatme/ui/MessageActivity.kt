@@ -55,7 +55,7 @@ class MessageActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recyclerview)
         recyclerView.setHasFixedSize(true)
-        var linearLayout = LinearLayoutManager(this)
+        val linearLayout = LinearLayoutManager(this)
         linearLayout.stackFromEnd = true
         recyclerView.layoutManager =linearLayout
 
