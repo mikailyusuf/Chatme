@@ -13,7 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.ProfileActivity"></activity>
-        <activity android:name=".ui.UserProfile" />
         <activity android:name=".ui.MessageActivity" />
         <activity android:name=".ui.ChatsActivity" />
         <activity android:name=".authUi.LoginActivity" />
